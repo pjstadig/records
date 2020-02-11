@@ -1,2 +1,5 @@
 {:paths ["src"]
- :deps {org.clojure/clojure {:mvn/version "1.10.1"}}}
+ :deps {org.clojure/clojure {:mvn/version "1.10.1"}
+        reducibles {:mvn/version "0.3.0"}
+        clj-time {:mvn/version "0.15.2"}}
+ :aliases {:run {:main-opts ["-m" "sybilant.main"]}}}
