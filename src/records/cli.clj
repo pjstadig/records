@@ -1,4 +1,4 @@
-(ns records.main
+(ns records.cli
   (:require
    [records.core :as core]))
 
