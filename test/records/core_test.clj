@@ -2,7 +2,9 @@
   (:require
    [clj-time.core :refer [date-time]]
    [clojure.test :refer [deftest is]]
-   [records.core :refer [parse-file parse-row sort-records]]))
+   [records.core :refer [parse-file parse-row sort-records]])
+  (:import
+   (java.io StringReader)))
 
 (deftest t-parse-row
   (let [row (parse-row ["Smith" "John" "Male" "Blue" "1/5/1970"])]
@@ -10,6 +12,12 @@
     (is (= "John" (:first row)))
     (is (= "Male" (:gender row)))
     (is (= (date-time 1970 1 5) (:dob row)))))
+
+(deftest t-parse-file
+  (try
+    (parse-file (StringReader. "Smith,John,Male,Blue,1/5/1970"))
+    (catch java.io.IOException _
+      (is false "should consume input only once"))))
 
 (deftest t-sort-records
   (let [records (parse-file "comma.csv")]
@@ -55,24 +63,24 @@
              :color "Yellow",
              :dob (date-time 1973 6 5)}]
            (sort-records "dob" records)))
-    (is (= [{:first "John",
-             :last "Smith",
-             :gender "Male",
-             :color "Blue",
-             :dob (date-time 1970 1 5)}
-            {:first "Jane",
+    (is (= [{:first "Jane",
              :last "Smith",
              :gender "Female",
              :color "Purple",
              :dob (date-time 1973 1 5)}
             {:first "John",
-             :last "Miller",
+             :last "Smith",
              :gender "Male",
-             :color "Yellow",
-             :dob (date-time 1973 6 5)}
+             :color "Blue",
+             :dob (date-time 1970 1 5)}
             {:first "Jane",
              :last "Miller",
              :gender "Female",
              :color "Blue",
-             :dob (date-time 1970 6 5)}]
+             :dob (date-time 1970 6 5)}
+            {:first "John",
+             :last "Miller",
+             :gender "Male",
+             :color "Yellow",
+             :dob (date-time 1973 6 5)}]
            (sort-records "last" records)))))

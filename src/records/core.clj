@@ -2,7 +2,9 @@
   (:require
    [clj-time.format :as time]
    [clojure.java.io :as io]
-   [reducibles.core :refer [csv-reducible]]))
+   [reducibles.core :refer [csv-reducible]])
+  (:import
+   (java.io StringReader StringWriter)))
 
 (defn detect-separator
   [file]
@@ -31,10 +33,19 @@
           color
           (time/unparse formatter dob)))
 
+(defn ->string
+  ^String [in]
+  (with-open [rdr (io/reader in) sw (StringWriter.)]
+    (io/copy rdr sw)
+    (.toString sw)))
+
 (defn parse-file
   [file]
-  (eduction (map parse-row)
-            (csv-reducible file {:separator (detect-separator file)})))
+  (let [str (->string file)]
+    (into []
+          (map parse-row)
+          (csv-reducible (StringReader. str)
+                         {:separator (detect-separator (StringReader. str))}))))
 
 (defn sort-records
   [sort records]
