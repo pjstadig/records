@@ -2,7 +2,7 @@
   (:require
    [clj-time.core :refer [date-time]]
    [clojure.test :refer [deftest is]]
-   [records.core :refer [parse-file parse-row sort-records]])
+   [records.core :refer [format-record parse-file parse-row sort-records]])
   (:import
    (java.io StringReader)))
 
@@ -18,6 +18,14 @@
     (parse-file (StringReader. "Smith,John,Male,Blue,1/5/1970"))
     (catch java.io.IOException _
       (is false "should consume input only once"))))
+
+(deftest t-format-record
+  (is (= "Smith,John,Male,Blue,1/5/1970"
+         (format-record {:first "John",
+                         :last "Smith",
+                         :gender "Male",
+                         :color "Blue",
+                         :dob (date-time 1970 1 5)}))))
 
 (deftest t-sort-records
   (let [records (parse-file "comma.csv")]
