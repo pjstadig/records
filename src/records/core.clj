@@ -22,6 +22,15 @@
    :color color
    :dob (time/parse formatter dob)})
 
+(defn format-record
+  [{:keys [last first gender color dob]}]
+  (format "%s,%s,%s,%s,%s"
+          last
+          first
+          gender
+          color
+          (time/unparse formatter dob)))
+
 (defn parse-file
   [file]
   (eduction (map parse-row)
