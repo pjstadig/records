@@ -54,7 +54,7 @@
       "gender" (->> records
                     (sort-by :last)
                     (sort-by :gender))
-      "dob" (sort-by :dob records)
-      "last" (->> records
+      "birthdate" (sort-by :dob records)
+      "name" (->> records
                   (sort-by :last)
                   reverse))))
