@@ -2,8 +2,8 @@
   (:require
    [clj-time.coerce :as time.coerce]
    [clj-time.format :as time.format]
-   [clojure.java.io :as io]
-   [reducibles.core :refer [csv-reducible]])
+   [clojure.data.csv :as csv]
+   [clojure.java.io :as io])
   (:import
    (java.io StringReader StringWriter)))
 
@@ -32,11 +32,9 @@
           sep (detect-separator line)]
       (-> []
           (into (map parse-row)
-                (csv-reducible (StringReader. line)
-                               {:separator sep}))
+                (csv/read-csv (StringReader. line) :separator sep))
           (into (map parse-row)
-                (csv-reducible rdr
-                               {:separator sep}))))))
+                (csv/read-csv rdr :separator sep))))))
 
 (defn sort-by-gender
   [records]
