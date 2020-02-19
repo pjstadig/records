@@ -54,4 +54,4 @@ curl -XGET http://localhost:8080/records/gender
 curl -XGET http://localhost:8080/records/name
 ```
 
-The first will cause the server to process and store the submitted file. The other three will return `text/plain` responses of the sorted data.
+The first will cause the server to process and store the submitted file. The other three will return `application/json` responses of the sorted data.
