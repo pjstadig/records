@@ -1,7 +1,10 @@
 (ns records.core-test
   (:require
    [clojure.test :refer [deftest is]]
-   [records.core :refer [format-record parse-file parse-row sort-records]])
+   [records.core :refer [parse-file parse-row
+                         sort-by-gender
+                         sort-by-name
+                         sort-by-birthdate]])
   (:import
    (java.io StringReader)))
 
@@ -17,14 +20,6 @@
     (parse-file (StringReader. "Smith,John,Male,Blue,1/5/1970"))
     (catch java.io.IOException _
       (is false "should consume input only once"))))
-
-(deftest t-format-record
-  (is (= "Smith,John,Male,Blue,1/5/1970"
-         (format-record {:first "John",
-                         :last "Smith",
-                         :gender "Male",
-                         :color "Blue",
-                         :dob #inst "1970-01-05"}))))
 
 (def records
   [{:first "John",
@@ -53,7 +48,7 @@
   (is (= records (parse-file "space.csv")))
   (is (= records (parse-file "pipe.csv"))))
 
-(deftest t-sort-records
+(deftest t-sort-by-gender
   (is (= [{:first "Jane",
            :last "Miller",
            :gender "Female",
@@ -74,7 +69,9 @@
            :gender "Male",
            :color "Blue",
            :dob #inst "1970-01-05"}]
-         (sort-records "gender" records)))
+         (sort-by-gender records))))
+
+(deftest t-sort-by-birthdate
   (is (= [{:first "John",
            :last "Smith",
            :gender "Male",
@@ -95,7 +92,9 @@
            :gender "Male",
            :color "Yellow",
            :dob #inst "1973-06-05"}]
-         (sort-records "birthdate" records)))
+         (sort-by-birthdate records))))
+
+(deftest t-sort-by-name
   (is (= [{:first "Jane",
            :last "Smith",
            :gender "Female",
@@ -116,4 +115,4 @@
            :gender "Male",
            :color "Yellow",
            :dob #inst "1973-06-05"}]
-         (sort-records "name" records))))
+         (sort-by-name records))))
