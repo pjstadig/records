@@ -4,4 +4,5 @@
         compojure {:mvn/version "1.6.1"}
         reducibles {:mvn/version "0.3.0"}
         ring {:mvn/version "1.8.0"}}
- :aliases {:run {:main-opts ["-m" "sybilant.main"]}}}
+ :aliases {:cli {:main-opts ["-m" "records.cli"]}
+           :server {:main-opts ["-m" "records.server"]}}}
