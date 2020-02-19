@@ -24,16 +24,8 @@
    :color color
    :dob (time.coerce/to-date (time.format/parse formatter dob))})
 
-(defn format-record
-  [{:keys [last first gender color dob]}]
-  (format "%s,%s,%s,%s,%s"
-          last
-          first
-          gender
-          color
-          (time.format/unparse formatter (time.coerce/to-date-time dob))))
-
 (defn parse-file
+  "Read the first line to detect separator, then parse the rest of the file."
   [readable]
   (with-open [rdr (io/reader readable)]
     (let [line (.readLine rdr)
