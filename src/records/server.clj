@@ -53,5 +53,5 @@
   (start! port))
 
 (defn -main
-  []
-  (start! 8080))
+  [port]
+  (start! (Long/parseLong port)))
