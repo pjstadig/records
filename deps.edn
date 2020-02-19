@@ -1,7 +1,8 @@
 {:paths ["src"]
- :deps {org.clojure/clojure {:mvn/version "1.10.1"}
+ :deps {cheshire {:mvn/version "5.10.0"}
         clj-time {:mvn/version "0.15.2"}
         compojure {:mvn/version "1.6.1"}
+        org.clojure/clojure {:mvn/version "1.10.1"}
         reducibles {:mvn/version "0.3.0"}
         ring {:mvn/version "1.8.0"}}
  :aliases {:cli {:main-opts ["-m" "records.cli"]}

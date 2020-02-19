@@ -1,17 +1,17 @@
 (ns records.server
   (:require
-   [clojure.string :as str]
+   [cheshire.core :as json]
    [compojure.core :refer [defroutes GET POST]]
    [compojure.route :refer [not-found]]
-   [records.core :refer [format-record parse-file sort-records]]
+   [records.core :refer [parse-file sort-records]]
    [ring.adapter.jetty :refer [run-jetty]]))
 
 (defonce records (atom []))
 
 (defn render-records [records]
-  {:headers {"content/type" "text/plain"}
+  {:headers {"content/type" "application/json"}
    :status 200
-   :body (str/join "\n" (map format-record records))})
+   :body (json/encode (vec records))})
 
 (defroutes app
   (POST "/records" {:keys [body] :as req}
@@ -21,10 +21,10 @@
        (let [sorted (sort-records "gender" @records)]
          (render-records sorted)))
   (GET "/records/birthdate" {}
-       (let [sorted (sort-records "dob" @records)]
+       (let [sorted (sort-records "birthdate" @records)]
          (render-records sorted)))
   (GET "/records/name" {}
-       (let [sorted (sort-records "last" @records)]
+       (let [sorted (sort-records "name" @records)]
          (render-records sorted)))
   (not-found "Not Found"))
 
@@ -53,5 +53,7 @@
   (start! port))
 
 (defn -main
-  [port]
-  (start! (Long/parseLong port)))
+  ([]
+   (-main "8080"))
+  ([port]
+   (start! (Long/parseLong port))))

@@ -1,6 +1,7 @@
 (ns records.core
   (:require
-   [clj-time.format :as time]
+   [clj-time.coerce :as time.coerce]
+   [clj-time.format :as time.format]
    [clojure.java.io :as io]
    [reducibles.core :refer [csv-reducible]])
   (:import
@@ -14,7 +15,7 @@
       #"," \,
       #"\|" \|)))
 
-(def formatter (time/formatter "M/d/YYYY"))
+(def formatter (time.format/formatter "M/d/YYYY"))
 
 (defn parse-row
   [[last first gender color dob]]
@@ -22,7 +23,7 @@
    :last last
    :gender gender
    :color color
-   :dob (time/parse formatter dob)})
+   :dob (time.coerce/to-date (time.format/parse formatter dob))})
 
 (defn format-record
   [{:keys [last first gender color dob]}]
@@ -31,7 +32,7 @@
           first
           gender
           color
-          (time/unparse formatter dob)))
+          (time.format/unparse formatter dob)))
 
 (defn ->string
   ^String [in]
