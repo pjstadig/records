@@ -1,6 +1,5 @@
 (ns records.core-test
   (:require
-   [clj-time.core :refer [date-time]]
    [clojure.test :refer [deftest is]]
    [records.core :refer [format-record parse-file parse-row sort-records]])
   (:import
@@ -11,7 +10,7 @@
     (is (= "Smith" (:last row)))
     (is (= "John" (:first row)))
     (is (= "Male" (:gender row)))
-    (is (= (date-time 1970 1 5) (:dob row)))))
+    (is (= #inst "1970-01-05T00:00:00.000-00:00" (:dob row)))))
 
 (deftest t-parse-file
   (try
@@ -25,69 +24,96 @@
                          :last "Smith",
                          :gender "Male",
                          :color "Blue",
-                         :dob (date-time 1970 1 5)}))))
+                         :dob #inst "1970-01-05"}))))
+
+(def records
+  [{:first "John",
+    :last "Smith",
+    :gender "Male",
+    :color "Blue",
+    :dob #inst "1970-01-05T00:00:00.000-00:00"}
+   {:first "Jane",
+    :last "Smith",
+    :gender "Female",
+    :color "Purple",
+    :dob #inst "1973-01-05T00:00:00.000-00:00"}
+   {:first "John",
+    :last "Miller",
+    :gender "Male",
+    :color "Yellow",
+    :dob #inst "1973-06-05T00:00:00.000-00:00"}
+   {:first "Jane",
+    :last "Miller",
+    :gender "Female",
+    :color "Blue",
+    :dob #inst "1970-06-05T00:00:00.000-00:00"}])
+
+(deftest t-parse-file
+  (is (= records (parse-file "comma.csv")))
+  (is (= records (parse-file "space.csv")))
+  (is (= records (parse-file "pipe.csv"))))
 
 (deftest t-sort-records
   (is (= [{:first "Jane",
            :last "Miller",
            :gender "Female",
            :color "Blue",
-           :dob (date-time 1970 6 5)}
+           :dob #inst "1970-06-05"}
           {:first "Jane",
            :last "Smith",
            :gender "Female",
            :color "Purple",
-           :dob (date-time 1973 1 5)}
+           :dob #inst "1973-01-05"}
           {:first "John",
            :last "Miller",
            :gender "Male",
            :color "Yellow",
-           :dob (date-time 1973 6 5)}
+           :dob #inst "1973-06-05"}
           {:first "John",
            :last "Smith",
            :gender "Male",
            :color "Blue",
-           :dob (date-time 1970 1 5)}]
-         (sort-records "gender" (parse-file "comma.csv"))))
+           :dob #inst "1970-01-05"}]
+         (sort-records "gender" records)))
   (is (= [{:first "John",
            :last "Smith",
            :gender "Male",
            :color "Blue",
-           :dob (date-time 1970 1 5)}
+           :dob #inst "1970-01-05"}
           {:first "Jane",
            :last "Miller",
            :gender "Female",
            :color "Blue",
-           :dob (date-time 1970 6 5)}
+           :dob #inst "1970-06-05"}
           {:first "Jane",
            :last "Smith",
            :gender "Female",
            :color "Purple",
-           :dob (date-time 1973 1 5)}
+           :dob #inst "1973-01-05"}
           {:first "John",
            :last "Miller",
            :gender "Male",
            :color "Yellow",
-           :dob (date-time 1973 6 5)}]
-         (sort-records "dob" (parse-file "pipe.csv"))))
+           :dob #inst "1973-06-05"}]
+         (sort-records "birthdate" records)))
   (is (= [{:first "Jane",
            :last "Smith",
            :gender "Female",
            :color "Purple",
-           :dob (date-time 1973 1 5)}
+           :dob #inst "1973-01-05"}
           {:first "John",
            :last "Smith",
            :gender "Male",
            :color "Blue",
-           :dob (date-time 1970 1 5)}
+           :dob #inst "1970-01-05"}
           {:first "Jane",
            :last "Miller",
            :gender "Female",
            :color "Blue",
-           :dob (date-time 1970 6 5)}
+           :dob #inst "1970-06-05"}
           {:first "John",
            :last "Miller",
            :gender "Male",
            :color "Yellow",
-           :dob (date-time 1973 6 5)}]
-         (sort-records "last" (parse-file "space.csv")))))
+           :dob #inst "1973-06-05"}]
+         (sort-records "name" records))))

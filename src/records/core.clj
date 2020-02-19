@@ -8,12 +8,11 @@
    (java.io StringReader StringWriter)))
 
 (defn detect-separator
-  [file]
-  (with-open [f (io/reader file)]
-    (condp re-find (first (line-seq f))
-      #" " \space
-      #"," \,
-      #"\|" \|)))
+  [line]
+  (condp re-find line
+    #" " \space
+    #"," \,
+    #"\|" \|))
 
 (def formatter (time.format/formatter "M/d/YYYY"))
 
@@ -32,30 +31,33 @@
           first
           gender
           color
-          (time.format/unparse formatter dob)))
-
-(defn ->string
-  ^String [in]
-  (with-open [rdr (io/reader in) sw (StringWriter.)]
-    (io/copy rdr sw)
-    (.toString sw)))
+          (time.format/unparse formatter (time.coerce/to-date-time dob))))
 
 (defn parse-file
-  [file]
-  (let [str (->string file)]
-    (into []
-          (map parse-row)
-          (csv-reducible (StringReader. str)
-                         {:separator (detect-separator (StringReader. str))}))))
+  [readable]
+  (with-open [rdr (io/reader readable)]
+    (let [line (.readLine rdr)
+          sep (detect-separator line)]
+      (-> []
+          (into (map parse-row)
+                (csv-reducible (StringReader. line)
+                               {:separator sep}))
+          (into (map parse-row)
+                (csv-reducible rdr
+                               {:separator sep}))))))
 
-(defn sort-records
-  [sort records]
-  (let [records (into [] records)]
-    (case sort
-      "gender" (->> records
-                    (sort-by :last)
-                    (sort-by :gender))
-      "birthdate" (sort-by :dob records)
-      "name" (->> records
-                  (sort-by :last)
-                  reverse))))
+(defn sort-by-gender
+  [records]
+  (->> records
+       (sort-by :last)
+       (sort-by :gender)))
+
+(defn sort-by-birthdate
+  [records]
+  (sort-by :dob records))
+
+(defn sort-by-name
+  [records]
+  (->> records
+       (sort-by :last)
+       reverse))

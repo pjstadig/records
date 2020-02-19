@@ -3,10 +3,10 @@
    [cheshire.core :as json]
    [compojure.core :refer [defroutes GET POST]]
    [compojure.route :refer [not-found]]
-   [records.core :refer [parse-file sort-records]]
+   [records.core :as core]
    [ring.adapter.jetty :refer [run-jetty]]))
 
-(defonce records (atom []))
+(defonce records (atom #{}))
 
 (defn render-records [records]
   {:headers {"content/type" "application/json"}
@@ -15,16 +15,16 @@
 
 (defroutes app
   (POST "/records" {:keys [body] :as req}
-        (swap! records into (parse-file body))
+        (swap! records into (core/parse-file body))
         {:status 200 :body "OK"})
   (GET "/records/gender" {}
-       (let [sorted (sort-records "gender" @records)]
+       (let [sorted (core/sort-by-gender @records)]
          (render-records sorted)))
   (GET "/records/birthdate" {}
-       (let [sorted (sort-records "birthdate" @records)]
+       (let [sorted (core/sort-by-birthdate @records)]
          (render-records sorted)))
   (GET "/records/name" {}
-       (let [sorted (sort-records "name" @records)]
+       (let [sorted (core/sort-by-name @records)]
          (render-records sorted)))
   (not-found "Not Found"))
 
@@ -45,7 +45,7 @@
            (when server
              (.stop server)
              nil)))
-  (reset! records []))
+  (reset! records #{}))
 
 (defn restart!
   [port]
