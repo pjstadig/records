@@ -1,11 +1,3 @@
-## Assumptions
-
-Dates are input in the same format they are to be output
-
-No header rows in files
-
-In cases where there are duplicates and no secondary sort the final order is not entirely stable
-
 ## Running the project
 
 *NOTE: Run all commands from the project directory.*
